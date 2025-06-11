@@ -26,6 +26,15 @@ A Windower addon for Final Fantasy XI that sends SMS notifications based on in-g
    - Enter your API key from [XiSMS](https://xisms.app/) in the `<key>` field.
    - Customize notification conditions and messages as needed (see below).
 
+## Updating
+To update XiSMS to the latest version, run the following command in your XiSMS addon directory:
+
+```sh
+git pull
+```
+
+This will fetch and apply the latest changes from the repository. Note that your `settings.xml` will remain untouched as it is excluded.
+
 ## Configuration
 Edit `data/settings.xml` to set your API key and notification rules. Example:
 
@@ -98,15 +107,7 @@ Edit `data/settings.xml` to set your API key and notification rules. Example:
    ```
    //xsms tellsoff
    ```
-10. **Enable SMS sending:**
-   ```
-   //xsms smson
-   ```
-11. **Disable SMS sending:**
-   ```
-   //xsms smsoff
-   ```
-12. **Show help:**
+10. **Show help:**
    ```
    //xsms help
    ```
@@ -120,8 +121,6 @@ Edit `data/settings.xml` to set your API key and notification rules. Example:
 - `test` — Sends a test SMS
 - `tellson` — Enables SMS notifications for /tell messages
 - `tellsoff` — Disables SMS notifications for /tell messages
-- `smson` — Enables all SMS sending (including notifications and /tell)
-- `smsoff` — Disables all SMS sending (including notifications and /tell)
 - `help` — Displays help text
 
 ## Notes
