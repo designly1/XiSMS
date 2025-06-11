@@ -1,0 +1,38 @@
+<?xml version="1.1"?>
+<!--
+    This is an example of the settings.xml file.
+    Copy this file to settings.xml and fill in the values.
+    You can create an account at https://xisms.app/ to get an API key.
+-->
+<settings>
+    <global>
+        <key>your_api_key_here</key>
+        <tells>on</tells>
+        <notifications>
+            <when>
+                <condition>
+                    <!-- eq, gt, lt, gte, lte, ne, and, or -->
+                    <eq>
+                        <!-- property path in the player object -->
+                        <var>job_points.rdm.jp</var>
+                        <val>500</val>
+                    </eq>
+                </condition>
+                <message>
+                    Job Points are at 500!
+                </message>
+            </when>
+            <when>
+                <condition>
+                    <lt>
+                        <var>vitals.hp</var>
+                        <val>800</val>
+                    </lt>
+                </condition>
+                <message>
+                    HP is below 800!
+                </message>
+            </when>
+        </notifications>
+    </global>
+</settings>
