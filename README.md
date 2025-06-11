@@ -112,6 +112,16 @@ Edit `data/settings.xml` to set your API key and notification rules. Example:
    //xsms help
    ```
 
+## Auto-Loading XiSMS on Startup
+To automatically load and start XiSMS when Windower launches, add the following lines to your `Windower/scripts/init.txt` file:
+
+```
+lua l xisms
+xsms start
+```
+
+This ensures XiSMS is loaded and the SMS listener is started every time you launch Windower.
+
 ## Command Reference
 - `start` — Starts SMS listener
 - `stop` — Stops SMS listener
