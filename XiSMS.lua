@@ -11,7 +11,7 @@ local json = require 'lib/dkjson'
 local https = require 'ssl/https'
 local ltn12 = require 'ltn12'
 local xml = require 'xml'
-local url = 'https://d.designly.biz/api/v1'
+local url = 'https://xisms.app/api/v1'
 
 local defaults = T {
     key = '',
