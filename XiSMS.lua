@@ -59,12 +59,20 @@ local send_test_sms = function()
     send_sms('Test SMS from XiSMS')
 end
 
-windower.register_event('chat message', function(message, player, mode, is_gm)
-    if mode == 3 and run and send_tells_enabled then
-        local msg = 'Message from ' .. player .. ': ' .. message
-        send_sms(msg)
+-- Function to match filter pattern against a message
+local function match_filter(filter, message)
+    -- Convert wildcard pattern to Lua pattern
+    -- Escape all special pattern characters except '*'
+    local pattern = filter:gsub("[%(%)%.%%%+%-%^%$%[%]%?]", "%%%1")
+    -- Convert '*' to '.-' for wildcard matching
+    pattern = pattern:gsub("%*", ".-")
+
+    if message:find(pattern) then
+        return true
     end
-end)
+    return false
+end
+
 
 -- Load and parse notifications from settings.xml
 local function load_notifications()
@@ -85,16 +93,18 @@ local function load_notifications()
         if gchild.name == 'notifications' then
             for _, when in ipairs(gchild.children) do
                 if when.name == 'when' then
-                    local cond, msg = nil, nil
+                    local cond, msg, filter = nil, nil, nil
                     for _, wchild in ipairs(when.children) do
                         if wchild.name == 'condition' then
                             cond = wchild.children[1] -- e.g., eq, gt, etc.
                         elseif wchild.name == 'message' then
                             msg = wchild.children[1] and wchild.children[1].value or nil
+                        elseif wchild.name == 'filter' then
+                            filter = wchild.children[1] and wchild.children[1].value or nil
                         end
                     end
-                    if cond and msg then
-                        table.insert(notifications, { condition = cond, message = msg })
+                    if (cond or filter) and msg then
+                        table.insert(notifications, { condition = cond, message = msg, filter = filter })
                     end
                 end
             end
@@ -202,6 +212,30 @@ local function format_table(t, indent)
     return table.concat(result, '\n')
 end
 
+local function dump_table(t)
+    notice('Table Dump:')
+    notice(format_table(t))
+end
+
+-- Update chat message event to check for filter match
+windower.register_event('chat message', function(message, player, mode, is_gm)
+    if mode == 3 and run and send_tells_enabled then
+        -- Default behavior if no filter matches
+        local msg = 'Message from ' .. player .. ': ' .. message
+        send_sms(msg)
+    end
+end)
+
+windower.register_event('incoming text', function(message)
+    -- Check if any notification filter matches the message
+    for _, notif in ipairs(notifications) do
+        if notif.filter and match_filter(notif.filter, message) then
+            send_sms(notif.message)
+            return
+        end
+    end
+end)
+
 windower.register_event('addon command', function(command)
     command = command and command:lower() or 'help'
 
@@ -233,6 +267,9 @@ windower.register_event('addon command', function(command)
     elseif command == 'tellsoff' then
         send_tells_enabled = false
         notice('SMS on /tell disabled')
+    elseif command == 'notifications' then
+        notice('Notifications Table:')
+        notice(format_table(notifications))
     elseif command == 'help' then
         windower.add_to_chat(17, 'XiSMS  v' .. _addon.version .. ' commands:')
         windower.add_to_chat(17, '//xsms [options]')
@@ -244,6 +281,7 @@ windower.register_event('addon command', function(command)
         windower.add_to_chat(17, '    test       - Sends a test SMS')
         windower.add_to_chat(17, '    tellson    - Enables SMS on /tell')
         windower.add_to_chat(17, '    tellsoff   - Disables SMS on /tell')
+        windower.add_to_chat(17, '    notifications - Displays the notifications table')
         windower.add_to_chat(17, '    help       - Displays this help text')
     end
 end)

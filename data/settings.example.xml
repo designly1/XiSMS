@@ -12,25 +12,21 @@
             <when>
                 <condition>
                     <!-- eq, gt, lt, gte, lte, ne, and, or -->
-                    <eq>
-                        <!-- property path in the player object -->
-                        <var>job_points.rdm.jp</var>
-                        <val>500</val>
-                    </eq>
-                </condition>
-                <message>
-                    Job Points are at 500!
-                </message>
-            </when>
-            <when>
-                <condition>
                     <lt>
+                        <!-- property path in the player object -->
                         <var>vitals.hp</var>
                         <val>800</val>
                     </lt>
                 </condition>
                 <message>
                     HP is below 800!
+                </message>
+            </when>
+            <when>
+                <!-- You can also use a filter to match messages in the log. * is a wildcard. -->
+                <filter>Romeo earns a job point! *499*</filter>
+                <message>
+                    Job Points are at 499!
                 </message>
             </when>
         </notifications>
